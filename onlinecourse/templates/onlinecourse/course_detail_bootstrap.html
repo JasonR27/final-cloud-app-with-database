@@ -47,56 +47,71 @@
                     <div class="card mt-1">
                         <div class="card-header"><h5>Lesson {{lesson.order|add:1}}: {{lesson.title}}</h5></div>
                         <div class="card-body">{{lesson.content}}</div>
-                    </div>
+                    </div>                    
+                    {% comment %} A collapse example here: {% endcomment %}        
                 {% endfor %}
             </div>
             <!-- Task: show questions and choices -->
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
+            {% if user.is_authenticated %}  
+            <br>
+                    <button type="button" class="btn btn-info btn-block" data-toggle="collapse" data-target="#exam">Start Exam</button>
+                    <br>
+                    {% comment %} before collapse div {% endcomment %}
+                    
+            <div id="exam" class="collapse" >
 
-            <!--
-
-            A collapse example here:
-            <div id="exam" class="collapse">
-                Click to expand elements within the collapse div
-                </div>
-
-            -->
+                {% comment %} Click to expand elements within the collapse div            {% endcomment %}
 
             <!-- <HINT> If user is authenticated, show course exam with a list of question -->
-
+                
             <!-- <HINT> Each example will have many questions -->
 
             <!-- <HINT> Each question will have many choices -->
-
 
             <!-- <HINT> Create a form to collect the selected choices for all questions -->
             <!-- <HINT> For each question choice, you may create a checkbox input like
             <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>
             -->
 
-            <!-- A choice submission form example
-            <form id="questionform" action="point to a submit view" method="post">
-                        ... for each question in the course ...
+             {% comment %} A choice submission form example {% endcomment %}
+            <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
+                {% comment %} <form method="post" action="{% url 'show_exam_result' course_id=course.id submission_id=submission.id %}"> {% endcomment %}
+                {% csrf_token %}
+                
+                       {% comment %} {% course %} {% endcomment %}
+                        {% comment %} ... for each question in the course ...   {% endcomment %}
+                        {% for question in course.question_set.all %}
                         <div class="card mt-1">
-                            <div class="card-header"><h5>{{ question.question_text}}</h5></div>
+                            {% comment %} {{question.question_text}} {% endcomment %}
+                            <div class="card-header"><h5>{{ question.question_text }}</h5></div>
                             {% csrf_token %}
                             <div class="form-group">
-                               ... for each choice in the question ...
+                               {% comment %} ... for each choice in the question ... {% endcomment %}
+                               {% for choice in question.choice_set.all %}
                                 <div class="form-check">
                                     <label class="form-check-label">
                                         <input type="checkbox" name="choice_{{choice.id}}"
                                                class="form-check-input" id="{{choice.id}}"
-                                               value="{{choice.id}}">{{ choice.choice_text }}
-                                    </label>
+                                               value="{{choice.id}}"> {{ choice.choice_text }}  </label>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
+                        {% endfor %}                        
                     <input class="btn btn-success btn-block" type="submit" value="Submit">
-            </form> -->
-
-            <!--Check here to see more details Bootstrap checkbox
+            </form>
+            {% endif %}
+        </div>
+        {% comment %} End of collapse div {% endcomment %}
+             <!--Check here to see more details Bootstrap checkbox
              https://www.w3schools.com/bootstrap4/bootstrap_forms_inputs.asp-->
+
+
+        
+
+            
     </div>
 </body>
 </html>
