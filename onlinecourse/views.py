@@ -126,13 +126,16 @@ def extract_answers(request):
 
 
 def show_exam_result(request, course_id, submission_id):
+    print("course_id: ", course_id, submission_id)
     course = get_object_or_404(Course, pk=course_id)
     submission = get_object_or_404(Submission, pk=submission_id)
     submitted_answers = extract_answers(request)
-    question = get_object_or_404(Question, pk=course_id)
+    # question = get_object_or_404(Question, pk=course_id)
+    
     user = request.user
-    # questions = course.question_set.all()
-    questions = []
+    questions = course.question_set.all()
+    questions_list = []
+    print('questions: ', questions)
     # choices = question.choice_set.all()
     choices = []
     correct_choices = []
@@ -144,46 +147,40 @@ def show_exam_result(request, course_id, submission_id):
     grade = 0
     
     sel_choices = []
-    cor_choices = []
+    # cor_choices = []
     
-    for i in submission.choices.all():
-        sel_choices.append(i)
+    # for i in submission.choices.all():
+    #     sel_choices.append(i)    
     
-    
-    
-    for i in course.question_set.all():
-        questions.append(i)
+    # for i in course.question_set.all():
+    #     questions_list.append(i)
         
-    for i in question.choice_set.all():
-        choices.append(i)
+    # for i in question.choice_set.all():
+    #     choices.append(i)
     
     for j in course.question_set.all():
         for i in j.choice_set.all():
             if i.is_correct == True:
                 correct_choices.append(i)
-                correct_choices_ids.append(i.id)       
+                # correct_choices_ids.append(i.id)       
     
-    for i in correct_choices:
-        cor_choices.append(i)
+    # for i in correct_choices:
+    #     cor_choices.append(i)
 
-    for i in selected_choices:
-        submitted_responses.append(i)
+    # for i in selected_choices:
+    #     submitted_responses.append(i)
         
-    for i in sel_choices:
-        if i in cor_choices:
-        # if sel_choices.index(i) == cor_choices.index(i):
-            grade += 100 / len(correct_choices)
-        # else: grade -= 100 / len(correct_choices)
+    for i in selected_choices:
+        if i in correct_choices:        
+            grade += 100 / len(correct_choices)        
                                           
-    count = 0
-    score = 0
+        
     total_score = grade
-    question_results = [] 
+    # question_results = []     
     
-    question_and_choices = []
     
-    for x in questions:
-        question_and_choices.append(question)
+    # for x in questions:
+    #     questions_list.append(x)
         
     questionsandanswers = {}
     count = 0  
@@ -191,72 +188,37 @@ def show_exam_result(request, course_id, submission_id):
     
     for q in questions:
         questionsandanswers['Option_'+str(count)] = {}
-        questionsandanswers['Option_'+str(count)]['Question_'+str(count)] =  q 
+        questionsandanswers['Option_'+str(count)]['Question'] =  q 
         count += 1        
     
     count = 0
     
-    for i in cor_choices:
-        questionsandanswers['Option_'+str(count)]['Correct_choice_'+str(count)] = i
+    for i in correct_choices:
+        questionsandanswers['Option_'+str(count)]['Correct_choice'] = i
         count += 1
         
     count = 0
     
     for j in selected_choices:
-        questionsandanswers['Option_'+str(count)]['Selected_choice_'+str(count)] = j
-        count += 1
-        
-    
-    
-    # for q in questions:
-        
-    #     questionsandanswers['Option_'+str(count)]['question_'+str(count)] = q 
-    #     count += 1        
-    
-    # count = 0
-    
-    # for i in correct_choices:
-    #     questionsandanswers['correct_choice_'+str(count)] = i
-    #     count += 1
-        
-    # count = 0
-    
-    # for j in selected_choices:
-    #     questionsandanswers['selected_choice_'+str(count)] = j
-    #     count += 1
-        
-        
-        
-        # for i in correct_choices:
-        #     questionsandanswers[count][count1] = i
-        #     count1 += 1
-        #     for j in selected_choices:
-        #         questionsandanswers[count][count1] = j
-        #         count += 1
-        #         count1 = 0
-                
-    displayresponses = ['Question', 'Your Answer', 'Correct Answer']          
+        questionsandanswers['Option_'+str(count)]['Selected_choice'] = j
+        count += 1          
        
         
     context = {
         'course': course,
         'submission': submission,
         'total_score': total_score,
-        'question_results': question_results,
-        'selected_choices': selected_choices,        
-        # 'selected_choices_ids': selected_choices_ids,        
-        'displayresponses': displayresponses,
-        'correct_choices': correct_choices,
-        'questions': questions,
-        'question': question,
-        'choices': choices,
-        # 'request_submitted': request_submitted,
-        'correct_choices_ids': correct_choices_ids,
-        'submitted_answers': submitted_answers,
-        'submitted_responses': submitted_responses,
-        'sel_choices': sel_choices,
-        'cor_choices': cor_choices,
-        'grade': grade,
+        # 'question_results': question_results,
+        # 'selected_choices': selected_choices,                
+        # 'correct_choices': correct_choices,
+        # 'questions': questions,        
+        # 'choices': choices,        
+        # 'correct_choices_ids': correct_choices_ids,
+        # 'submitted_answers': submitted_answers,
+        # 'submitted_responses': submitted_responses,
+        # 'sel_choices': sel_choices,
+        # 'cor_choices': cor_choices,
+        # 'grade': grade,
         'user': user,
         'count': count,
         'questionsandanswers': questionsandanswers
@@ -284,31 +246,14 @@ def submit(request, course_id):
         # selected_choice_ids = []
         for key, value in request.POST.items():
             if key.startswith('choice_'):
-                # selected_choices_ids.append(key)
-                # selected_choices_ids.append(value)  
-                # selected_choices.append(value)  
                 submission.choices.add(value) 
                 
-    
-    # for choice in selected_choices:
-    #     choice = get_object_or_404(Choice, id=choice_id)
-    #     submission.choices.add(choice)
-    
-    # for i in selected_choices_ids:
-    #     choice = get_object_or_404(Choice, id=selected_choices_ids[i])
-    #     submission.choices.append(choice)        
+           
         
     for i in selected_choices_ids:
         choice = get_object_or_404(Choice, id=i)
         submission.choices.add(choice)     
     
-    # for i in selected_choices:
-    #     choice = get_object_or_404(Choice, id=i)
-    #     submission.choices.add(choice)        
-        
-    # context = {
-    #         'selected_choices': selected_choices
-    #     }
 
     return redirect('onlinecourse:show_exam_result', course_id=course_id, submission_id=submission.id)
 
