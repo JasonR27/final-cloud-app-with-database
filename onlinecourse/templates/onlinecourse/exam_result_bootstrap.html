@@ -88,6 +88,11 @@
         <br />              
         {% endfor %}
         </ol>
+        <a
+        class="btn btn-link text-danger"
+        href="{% url 'onlinecourse:course_details' course.id %}"
+        >Re-test</a
+      >
       {% else %}
       <div class="alert alert-danger">
         <!--HINT Display failed info -->

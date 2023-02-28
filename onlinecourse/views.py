@@ -169,8 +169,9 @@ def show_exam_result(request, course_id, submission_id):
 
     # for i in selected_choices:
     #     submitted_responses.append(i)
-        
+    scorecount = 0    
     for i in selected_choices:
+        print(submission.choices.all())        
         if i in correct_choices:        
             grade += 100 / len(correct_choices)        
                                           
