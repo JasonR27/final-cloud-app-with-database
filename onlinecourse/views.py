@@ -128,62 +128,17 @@ def extract_answers(request):
 def show_exam_result(request, course_id, submission_id):
     print("course_id: ", course_id, submission_id)
     course = get_object_or_404(Course, pk=course_id)
-    submission = get_object_or_404(Submission, pk=submission_id)
-    submitted_answers = extract_answers(request)
-    # question = get_object_or_404(Question, pk=course_id)
-    
+    submission = get_object_or_404(Submission, pk=submission_id)    
     user = request.user
-    questions = course.question_set.all()
-    # questions_ids = course.question_ids_set.all()
-    questions_list = []
-    print('questions: ', questions)
-    # choices = question.choice_set.all()
-    choices = []
-    correct_choices = []
-    correct_choices_ids = []
-    submitted_responses = []
-    # selected_choices = submission.choices
-    selected_choices = submission.choices.all()
-    # selected_choices_ids = []
+    questions = course.question_set.all()    
+    correct_choices = []   
+    selected_choices = submission.choices.all()    
     grade = 0
-    
-    sel_choices = []
-    # cor_choices = []
-    
-    # for i in submission.choices.all():
-    #     sel_choices.append(i)    
-    
-    # for i in course.question_set.all():
-    #     questions_list.append(i)
-        
-    # for i in question.choice_set.all():
-    #     choices.append(i)
     
     for j in course.question_set.all():
         for i in j.choice_set.all():
             if i.is_correct == True:
                 correct_choices.append(i)
-                # correct_choices_ids.append(i.id)       
-    
-    # for i in correct_choices:
-    #     cor_choices.append(i)
-
-    # for i in selected_choices:
-    #     submitted_responses.append(i)
-    scorecount = 0    
-    
-    # for i in selected_choices:
-    #     print(submission.choices.all())        
-    #     if i in correct_choices:        
-    #         grade += 100 / len(correct_choices)        
-                                          
-        
-    # total_score = grade
-    # question_results = []     
-    
-    
-    # for x in questions:
-    #     questions_list.append(x)
     
     questionsandcoranswers = {}
     count1 = 0  
@@ -220,8 +175,7 @@ def show_exam_result(request, course_id, submission_id):
     count3 = 0
     
     
-    for key, value in questionsandcoranswers.items():
-        # print(submission.choices.all())        
+    for key, value in questionsandcoranswers.items():        
         print('value: ', value)
         print('key: ',key)
         print('corresseleansw: ',questionsandselanswers[key])
@@ -257,18 +211,7 @@ def show_exam_result(request, course_id, submission_id):
     context = {
         'course': course,
         'submission': submission,
-        'total_score': total_score,
-        # 'question_results': question_results,
-        # 'selected_choices': selected_choices,                
-        # 'correct_choices': correct_choices,
-        # 'questions': questions,        
-        # 'choices': choices,        
-        # 'correct_choices_ids': correct_choices_ids,
-        # 'submitted_answers': submitted_answers,
-        # 'submitted_responses': submitted_responses,
-        # 'sel_choices': sel_choices,
-        # 'cor_choices': cor_choices,
-        # 'grade': grade,
+        'total_score': total_score,        
         'user': user,
         'count': count,
         'questionsandanswers': questionsandanswers
