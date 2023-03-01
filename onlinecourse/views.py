@@ -134,6 +134,7 @@ def show_exam_result(request, course_id, submission_id):
     
     user = request.user
     questions = course.question_set.all()
+    # questions_ids = course.question_ids_set.all()
     questions_list = []
     print('questions: ', questions)
     # choices = question.choice_set.all()
@@ -170,18 +171,66 @@ def show_exam_result(request, course_id, submission_id):
     # for i in selected_choices:
     #     submitted_responses.append(i)
     scorecount = 0    
-    for i in selected_choices:
-        print(submission.choices.all())        
-        if i in correct_choices:        
-            grade += 100 / len(correct_choices)        
+    
+    # for i in selected_choices:
+    #     print(submission.choices.all())        
+    #     if i in correct_choices:        
+    #         grade += 100 / len(correct_choices)        
                                           
         
-    total_score = grade
+    # total_score = grade
     # question_results = []     
     
     
     # for x in questions:
     #     questions_list.append(x)
+    
+    questionsandcoranswers = {}
+    count1 = 0  
+    
+    
+    for q in questions:
+        questionsandcoranswers['Option_'+str(count1)] = {}
+        questionsandcoranswers['Option_'+str(count1)]['question'] =  q 
+        count1 += 1
+        
+    count1 = 0          
+    
+    for i in correct_choices:
+        questionsandcoranswers['Option_'+str(count1)]['choice'] = i
+        count1 += 1
+        
+    
+    questionsandselanswers = {}
+    count2 = 0  
+    
+    
+    for q in questions:
+        questionsandselanswers['Option_'+str(count2)] = {}
+        questionsandselanswers['Option_'+str(count2)]['question'] =  q 
+        count2 += 1
+        
+    count2 = 0   
+           
+    print('selected_choices: ', selected_choices)
+    for i in selected_choices:
+        questionsandselanswers['Option_'+str(count2)]['choice'] = i
+        count2 += 1
+        
+    count3 = 0
+    
+    
+    for key, value in questionsandcoranswers.items():
+        # print(submission.choices.all())        
+        print('value: ', value)
+        print('key: ',key)
+        print('corresseleansw: ',questionsandselanswers[key])
+        if value['choice'] == questionsandselanswers[key]['choice']:        
+            grade += 100 / len(correct_choices)        
+                                          
+        
+    total_score = grade
+    
         
     questionsandanswers = {}
     count = 0  
